@@ -7,7 +7,8 @@ $('document').ready(function(){
 			recaptchaKey = isRecaptcha ? $recaptcha.attr('content') : null,
 			recaptchaTested = false,
 			recaptchaWidgetId,
-			data = {};
+			data = {},
+			baseCases = {"-1": "Сомнительная", "1": "Основная", "0": "ID не найден"};
 
 	ui();
 
@@ -55,7 +56,7 @@ $('document').ready(function(){
 				var text = '';
 				if(resp.success == 1) {
 					for(var sapeID in resp.ids) {
-						text += sapeID + ' > ' + (resp.ids[sapeID] == 1 ? 'Основная' : 'Сомнительная') + "\n";
+						text += sapeID + ' > ' + baseCases[resp.ids[sapeID]] + "\n";
 					}
 					$message.val(text);
 				} else {

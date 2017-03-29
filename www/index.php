@@ -43,5 +43,6 @@ $config = json_decode(file_get_contents('../etc/config.json'));
       Скачать этот сайт</a>
     </form>
   </div>
+  <?php include('../etc/counters.html'); ?>
   </body>
 </html>
