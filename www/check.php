@@ -12,6 +12,7 @@ class DomainsInfo {
   public function run() {
     $ret = array();
     try {
+      $this->recaptcha();
       $this->collectSapeIds();
       $this->initCurl();
       $this->login();
@@ -28,6 +29,14 @@ class DomainsInfo {
       $ret['success'] = 0;
     }
     die(json_encode($ret));
+  }
+
+  private function recaptcha() {
+    if($this->config->recaptcha->active != 1) return;
+    require('recaptchalib.php');
+    $reCaptcha = new ReCaptcha($this->config->recaptcha->private);
+    $response = $reCaptcha->verifyResponse($_SERVER["REMOTE_ADDR"], $_REQUEST["recaptcha"]);
+    if(!isset($response) || !$response->success) throw new Exception("Вы не прошли каптчу", 1);
   }
 
   private function collectSapeIds() {
@@ -79,7 +88,8 @@ class DomainsInfo {
     if(preg_match_all('~<span\s+class="fs10">ID:\s+([0-9]+)\s+\|~', $this->search_result, $m)) {
       $this->siteIdsMainbase = $m[1];
     } else {
-      throw new Exception("No sites founded, check 1) ids 2) login-password 3) regexp", 1);
+      // No sites founded, check 1) ids 2) login-password 3) regexp
+      throw new Exception("Сайты с такими ID не найдены в sape", 1);
     }
   }
 
